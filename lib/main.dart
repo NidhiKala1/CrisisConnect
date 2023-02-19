@@ -5,6 +5,8 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -150,6 +152,8 @@ class FuncListScreen extends StatefulWidget {
 class _DevicesListScreenState extends State<DevicesListScreen> {
   List<Device> devices = [];
   List<Device> connectedDevices = [];
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  late Future<List<String>> items;
   late NearbyService nearbyService;
   late StreamSubscription subscription;
   late StreamSubscription receivedDataSubscription;
@@ -159,6 +163,9 @@ class _DevicesListScreenState extends State<DevicesListScreen> {
   @override
   void initState() {
     super.initState();
+    items = _prefs.then((SharedPreferences prefs) {
+      return prefs.getStringList('items') ?? [""];
+    });
     init();
   }
 
@@ -170,6 +177,20 @@ class _DevicesListScreenState extends State<DevicesListScreen> {
     nearbyService.stopAdvertisingPeer();
     super.dispose();
   }
+
+  Future<void> addItems(String msg) async {
+    final SharedPreferences prefs = await _prefs;
+    
+    final List<String> _items = (prefs.getStringList('_items') ?? [""]);
+    _items.add(msg);
+
+    setState(() {
+      items = prefs.setStringList('_items', _items).then((bool success) {
+        return _items;
+      });
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -300,9 +321,14 @@ class _DevicesListScreenState extends State<DevicesListScreen> {
                 TextButton(
                   child: Text("Send"),
                   onPressed: () {
+                    addItems(myController.text);
+                    items = _prefs.then((SharedPreferences prefs) {
                     nearbyService.sendMessage(
-                        device.deviceId, myController.text);
+                    device.deviceId, myController.text);
                     myController.text = '';
+                    return prefs.getStringList('items') ?? [""];
+                      });
+                    //  myController.text = '';
                   },
                 )
               ],
@@ -397,6 +423,7 @@ class _DevicesListScreenState extends State<DevicesListScreen> {
     receivedDataSubscription =
         nearbyService.dataReceivedSubscription(callback: (data) {
       print("dataReceivedSubscription: ${jsonEncode(data)}");
+      addItems(data.msg);
       showToast(jsonEncode(data),
           context: context,
           axis: Axis.horizontal,
@@ -708,5 +735,6 @@ class _FuncListScreenState extends State<FuncListScreen> {
   //   });
   // }
 }
+
 
 
