@@ -16,10 +16,10 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => Home());
     case 'browser':
       return MaterialPageRoute(
-          builder: (_) => DevicesListScreen(deviceType: ButtonType.browser));
+          builder: (_) => DevicesListScreen(deviceType: DeviceType.browser));
     case 'advertiser':
       return MaterialPageRoute(
-          builder: (_) => DevicesListScreen(deviceType: ButtonType.advertiser));
+          builder: (_) => DevicesListScreen(deviceType: DeviceType.advertiser));
     case 'SOS':
       return MaterialPageRoute(
           builder: (_) => FuncListScreen(funcTypes: funcType.SOS));
@@ -129,7 +129,7 @@ class DevicesListScreen extends StatefulWidget {
   const DevicesListScreen({required this.deviceType });
   // const DevicesListScreen({required this.deviceType});
 
-  final ButtonType deviceType;
+  final DeviceType deviceType;
   // final DeviceType deviceType;
 
   @override
@@ -353,12 +353,14 @@ class _DevicesListScreenState extends State<DevicesListScreen> {
         strategy: Strategy.P2P_CLUSTER,
         callback: (isRunning) async {
           if (isRunning) {
+            print(widget.deviceType);
             if (widget.deviceType == DeviceType.browser) {
-
+              print("HERE1");
               await nearbyService.stopBrowsingForPeers();
               await Future.delayed(Duration(microseconds: 200));
               await nearbyService.startBrowsingForPeers();
             } else {
+              print("HERE2");
               await nearbyService.stopAdvertisingPeer();
               await nearbyService.stopBrowsingForPeers();
               await Future.delayed(Duration(microseconds: 200));
@@ -395,6 +397,11 @@ class _DevicesListScreenState extends State<DevicesListScreen> {
     receivedDataSubscription =
         nearbyService.dataReceivedSubscription(callback: (data) {
       print("dataReceivedSubscription: ${jsonEncode(data)}");
+      showToast(jsonEncode(data),
+          context: context,
+          axis: Axis.horizontal,
+          alignment: Alignment.center,
+          position: StyledToastPosition.bottom);
     });
   }
 }
@@ -416,7 +423,7 @@ class _FuncListScreenState extends State<FuncListScreen> {
   @override
   void initState() {
     super.initState();
-    init();
+    // init();
   }
 
   @override
@@ -537,169 +544,169 @@ class _FuncListScreenState extends State<FuncListScreen> {
     );
   }
 
-  String getStateName(SessionState state) {
-    switch (state) {
-      case SessionState.notConnected:
-        return "disconnected";
-      case SessionState.connecting:
-        return "waiting";
-      default:
-        return "connected";
-    }
-  }
+  // String getStateName(SessionState state) {
+  //   switch (state) {
+  //     case SessionState.notConnected:
+  //       return "disconnected";
+  //     case SessionState.connecting:
+  //       return "waiting";
+  //     default:
+  //       return "connected";
+  //   }
+  // }
 
-  String getButtonStateName(SessionState state) {
-    switch (state) {
-      case SessionState.notConnected:
-      case SessionState.connecting:
-        return "Connect";
-      default:
-        return "Disconnect";
-    }
-  }
+  // String getButtonStateName(SessionState state) {
+  //   switch (state) {
+  //     case SessionState.notConnected:
+  //     case SessionState.connecting:
+  //       return "Connect";
+  //     default:
+  //       return "Disconnect";
+  //   }
+  // }
 
-  Color getStateColor(SessionState state) {
-    switch (state) {
-      case SessionState.notConnected:
-        return Colors.black;
-      case SessionState.connecting:
-        return Colors.grey;
-      default:
-        return Colors.green;
-    }
-  }
+  // Color getStateColor(SessionState state) {
+  //   switch (state) {
+  //     case SessionState.notConnected:
+  //       return Colors.black;
+  //     case SessionState.connecting:
+  //       return Colors.grey;
+  //     default:
+  //       return Colors.green;
+  //   }
+  // }
 
-  Color getButtonColor(SessionState state) {
-    switch (state) {
-      case SessionState.notConnected:
-      case SessionState.connecting:
-        return Colors.green;
-      default:
-        return Colors.red;
-    }
-  }
+  // Color getButtonColor(SessionState state) {
+  //   switch (state) {
+  //     case SessionState.notConnected:
+  //     case SessionState.connecting:
+  //       return Colors.green;
+  //     default:
+  //       return Colors.red;
+  //   }
+  // }
 
-  _onTabItemListener(Device device) {
-    if (device.state == SessionState.connected) {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            final myController = TextEditingController();
-            return AlertDialog(
-              title: Text("Send message"),
-              content: TextField(controller: myController),
-              actions: [
-                TextButton(
-                  child: Text("Cancel"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                TextButton(
-                  child: Text("Send"),
-                  onPressed: () {
-                    nearbyService.sendMessage(
-                        device.deviceId, myController.text);
-                    myController.text = '';
-                  },
-                )
-              ],
-            );
-          });
-    }
-  }
+  // _onTabItemListener(Device device) {
+  //   if (device.state == SessionState.connected) {
+  //     showDialog(
+  //         context: context,
+  //         builder: (BuildContext context) {
+  //           final myController = TextEditingController();
+  //           return AlertDialog(
+  //             title: Text("Send message"),
+  //             content: TextField(controller: myController),
+  //             actions: [
+  //               TextButton(
+  //                 child: Text("Cancel"),
+  //                 onPressed: () {
+  //                   Navigator.of(context).pop();
+  //                 },
+  //               ),
+  //               TextButton(
+  //                 child: Text("Send"),
+  //                 onPressed: () {
+  //                   nearbyService.sendMessage(
+  //                       device.deviceId, myController.text);
+  //                   myController.text = '';
+  //                 },
+  //               )
+  //             ],
+  //           );
+  //         });
+  //   }
+  // }
 
-  int getItemCount() {
-    if (widget.funcTypes == DeviceType.advertiser) {
-      return connectedDevices.length;
-    } else {
-      return devices.length;
-    }
-  }
+  // int getItemCount() {
+  //   if (widget.funcTypes == DeviceType.advertiser) {
+  //     return connectedDevices.length;
+  //   } else {
+  //     return devices.length;
+  //   }
+  // }
 
-  _onButtonClicked(Device device) {
-    switch (device.state) {
-      case SessionState.notConnected:
-        nearbyService.invitePeer(
-          deviceID: device.deviceId,
-          deviceName: device.deviceName,
-        );
-        break;
-      case SessionState.connected:
-        nearbyService.disconnectPeer(deviceID: device.deviceId);
-        break;
-      case SessionState.connecting:
-        break;
-    }
-  }
+  // _onButtonClicked(Device device) {
+  //   switch (device.state) {
+  //     case SessionState.notConnected:
+  //       nearbyService.invitePeer(
+  //         deviceID: device.deviceId,
+  //         deviceName: device.deviceName,
+  //       );
+  //       break;
+  //     case SessionState.connected:
+  //       nearbyService.disconnectPeer(deviceID: device.deviceId);
+  //       break;
+  //     case SessionState.connecting:
+  //       break;
+  //   }
+  // }
 
-  void init() async {
-    nearbyService = NearbyService();
-    String? devInfo = '';
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    if (Platform.isAndroid) {
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      devInfo = androidInfo.model;
-    }
-    if (Platform.isIOS) {
-      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      devInfo = iosInfo.localizedModel;
-    }
-    await nearbyService.init(
-        serviceType: 'mpconn',
-        deviceName: devInfo,
-        strategy: Strategy.P2P_CLUSTER,
-        callback: (isRunning) async {
-          if (isRunning) {
-            if (widget.funcTypes == DeviceType.browser) {
+  // void init() async {
+  //   nearbyService = NearbyService();
+  //   String? devInfo = '';
+  //   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  //   if (Platform.isAndroid) {
+  //     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+  //     devInfo = androidInfo.model;
+  //   }
+  //   if (Platform.isIOS) {
+  //     IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+  //     devInfo = iosInfo.localizedModel;
+  //   }
+  //   await nearbyService.init(
+  //       serviceType: 'mpconn',
+  //       deviceName: devInfo,
+  //       strategy: Strategy.P2P_CLUSTER,
+  //       callback: (isRunning) async {
+  //         if (isRunning) {
+  //           if (widget.funcTypes == DeviceType.browser) {
 
-              await nearbyService.stopBrowsingForPeers();
-              await Future.delayed(Duration(microseconds: 200));
-              await nearbyService.startBrowsingForPeers();
-            } else {
-              await nearbyService.stopAdvertisingPeer();
-              await nearbyService.stopBrowsingForPeers();
-              await Future.delayed(Duration(microseconds: 200));
-              await nearbyService.startAdvertisingPeer();
-              await nearbyService.startBrowsingForPeers();
-            }
-          }
-        });
-    subscription =
-        nearbyService.stateChangedSubscription(callback: (devicesList) {
-      devicesList.forEach((element) {
-        print(
-            " deviceId: ${element.deviceId} | deviceName: ${element.deviceName} | state: ${element.state}");
+  //             await nearbyService.stopBrowsingForPeers();
+  //             await Future.delayed(Duration(microseconds: 200));
+  //             await nearbyService.startBrowsingForPeers();
+  //           } else {
+  //             await nearbyService.stopAdvertisingPeer();
+  //             await nearbyService.stopBrowsingForPeers();
+  //             await Future.delayed(Duration(microseconds: 200));
+  //             await nearbyService.startAdvertisingPeer();
+  //             await nearbyService.startBrowsingForPeers();
+  //           }
+  //         }
+  //       });
+  //   subscription =
+  //       nearbyService.stateChangedSubscription(callback: (devicesList) {
+  //     devicesList.forEach((element) {
+  //       print(
+  //           " deviceId: ${element.deviceId} | deviceName: ${element.deviceName} | state: ${element.state}");
 
-        if (Platform.isAndroid) {
-          if (element.state == SessionState.connected) {
-            nearbyService.stopBrowsingForPeers();
-          } else {
-            nearbyService.startBrowsingForPeers();
-          }
-        }
-      });
+  //       if (Platform.isAndroid) {
+  //         if (element.state == SessionState.connected) {
+  //           nearbyService.stopBrowsingForPeers();
+  //         } else {
+  //           nearbyService.startBrowsingForPeers();
+  //         }
+  //       }
+  //     });
 
-      setState(() {
-        devices.clear();
-        devices.addAll(devicesList);
-        connectedDevices.clear();
-        connectedDevices.addAll(devicesList
-            .where((d) => d.state == SessionState.connected)
-            .toList());
-      });
-    });
+  //     setState(() {
+  //       devices.clear();
+  //       devices.addAll(devicesList);
+  //       connectedDevices.clear();
+  //       connectedDevices.addAll(devicesList
+  //           .where((d) => d.state == SessionState.connected)
+  //           .toList());
+  //     });
+  //   });
 
-    receivedDataSubscription =
-        nearbyService.dataReceivedSubscription(callback: (data) {
-      print("dataReceivedSubscription: ${jsonEncode(data)}");
-      showToast(jsonEncode(data),
-          context: context,
-          axis: Axis.horizontal,
-          alignment: Alignment.center,
-          position: StyledToastPosition.bottom);
-    });
-  }
+  //   receivedDataSubscription =
+  //       nearbyService.dataReceivedSubscription(callback: (data) {
+  //     print("dataReceivedSubscription: ${jsonEncode(data)}");
+  //     showToast(jsonEncode(data),
+  //         context: context,
+  //         axis: Axis.horizontal,
+  //         alignment: Alignment.center,
+  //         position: StyledToastPosition.bottom);
+  //   });
+  // }
 }
 
 
