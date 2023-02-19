@@ -59,7 +59,7 @@ class Home extends StatelessWidget {
                 Navigator.pushNamed(context, 'SOS');
               },
               child: Container(
-                color: Colors.red,
+                color: Color.fromARGB(255, 1, 103, 107),
                 child: Center(
                     child: Text(
                   'SOS',
@@ -74,10 +74,10 @@ class Home extends StatelessWidget {
                 Navigator.pushNamed(context, 'announcements');
               },
               child: Container(
-                color: Colors.red,
+                color: Color.fromARGB(255, 1, 103, 107),
                 child: Center(
                     child: Text(
-                  'announcements',
+                  'Announcements',
                   style: TextStyle(color: Colors.white, fontSize: 40),
                 )),
               ),
@@ -166,7 +166,7 @@ class _DevicesListScreenState extends State<DevicesListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.deviceType.toString().substring(11).toUpperCase()),
+          title: Text(""),
         ),
         backgroundColor: Colors.white,
         body: ListView.builder(
@@ -258,7 +258,7 @@ class _DevicesListScreenState extends State<DevicesListScreen> {
       case SessionState.connecting:
         return Colors.grey;
       default:
-        return Colors.green;
+        return Color.fromARGB(255, 32,42,68);
     }
   }
 
@@ -266,9 +266,9 @@ class _DevicesListScreenState extends State<DevicesListScreen> {
     switch (state) {
       case SessionState.notConnected:
       case SessionState.connecting:
-        return Colors.green;
+        return Color.fromARGB(255, 32,42,68);
       default:
-        return Colors.red;
+        return Color.fromARGB(255, 1, 103, 107);
     }
   }
 
@@ -437,7 +437,7 @@ class _FuncListScreenState extends State<FuncListScreen> {
 
   return Scaffold(
       appBar: AppBar(
-          title: Text(widget.funcTypes.toString().substring(9).toUpperCase()),
+          title: Text(""),
       ),
       body: Column(
         children: [
@@ -447,10 +447,10 @@ class _FuncListScreenState extends State<FuncListScreen> {
                 Navigator.pushNamed(context, 'browser');
               },
               child: Container(
-                color: Colors.red,
+                color: Color.fromARGB(255, 1, 103, 107),
                 child: Center(
                     child: Text(
-                  'BROWSER',
+                  'View SOS',
                   style: TextStyle(color: Colors.white, fontSize: 40),
                 )),
               ),
@@ -462,10 +462,10 @@ class _FuncListScreenState extends State<FuncListScreen> {
                 Navigator.pushNamed(context, 'advertiser');
               },
               child: Container(
-                color: Colors.green,
+                color: Color.fromARGB(255, 32,42,68),
                 child: Center(
                     child: Text(
-                  'ADVERTISER',
+                  'Send SOS Message',
                   style: TextStyle(color: Colors.white, fontSize: 40),
                 )),
               ),
